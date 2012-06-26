@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="remix-url" content="">
+    <meta name="publish-url" content="http://thimbletest.org">
+    <meta name="deployment-type" content="development">
+    <base target="_blank">
+
+    <!-- Dynamic servers like Django sites can serve this editor at a
+         path different from the static files by changing the line
+         below. -->
+    <base href=".">
+
+    <title>Mozilla Thimble</title>
+    <link rel="stylesheet" href="codemirror2/lib/codemirror.css">
+    <link rel="stylesheet" href="css/jsbin-codemirror-theme.css">
+    <link rel="stylesheet" href="css/tipsy.css">
+    <link rel="stylesheet" href="css/opensans/stylesheet.css">
+    <link rel="stylesheet" href="css/opensymbolcropped/stylesheet.css">
+    <link rel="stylesheet" href="css/editor.css">
+    <link rel="stylesheet" href="css/errorhelp.css">
+    <link rel="stylesheet" href="css/modals.css">
+  </head>
+  <body class="loading">
+     <a href="http://www.mozilla.org/" id="tabzilla">mozilla</a>
+
+    <header id="header">
+      <div class="logo">
+        <a href="/">
+          <img src="img/thimble-logo.png" alt="Mozilla Thimble">
+        </a>
+      </div>
+
+      <div id="nav-options">
+        <div id="loading-message">
+          Loading&hellip;
+        </div>
+        <div id="editor-pane-nav-options">
+          <!-- editor, undo, redo, text size, hinting -->
+          <div id="editor-nav-item" class="nav-item">
+            <span class="icon">&nbsp;</span>Editor
+            <div class="pane-indicator enabled"></div>
+          </div>
+          <div id="undo-nav-item" class="nav-item responsive"
+               data-restore-help="We've rescued your very recent changes to this page, but you can click this button to undo them."
+               title="Undo changes">
+               <span class="icon">&nbsp;</span>Undo</div>
+          <div id="redo-nav-item" class="nav-item responsive" title="Redo changes">
+            <span class="icon">&nbsp;</span>Redo
+          </div>
+          <div id="text-nav-item" class="nav-item responsive enabled" title="Change text size">
+            <span class="icon">&nbsp;</span>Size
+            <ul id="text-size-options">
+              <li data-size="small">Small</li>
+              <li data-size="normal" data-default-size>Normal</li>
+              <li data-size="large">Large</li>
+            </ul>
+          </div>
+          <div id="hints-nav-item"  class="nav-item enabled" title="Disable HTML and CSS hints and suggestions">
+            <div class="checkbox on">✓</div> <div class="checkbox-label">Show hints</div></div>
+        </div>
+        <div id="preview-pane-nav-options">
+          <!-- previous, save draft, publish -->
+           <div id="preview-nav-item" class="nav-item">
+             <span class="icon">&nbsp;</span>Preview<span class="preview-title"></span><div class="pane-indicator enabled"></div>
+           </div>
+           <div class="nav-item buttons">
+             <div id="publish-button" class="nav-button">Publish <span id="publish-pulldown">&nbsp;</span></div>
+           </div>
+        </div>
+      </div>
+    </header>
+
+
+    <section id="editor">
+      <!-- source code and live preview sections -->
+      <div id="source"></div>
+      <div id="preview-holder"></div>
+      <!-- actual hint and error boxes -->
+      <div class="error hidden"></div>
+      <div class="help hidden"></div>
+    </section>
+
+
+    <!-- save/publish modal dialogs -->
+    <div id="confirm-dialog" class="modal-overlay" style="display: none;">
+      <div class="thimble-modal-menu thimble-question-bar">
+        <div class="thimble-branding"></div>
+        <div class="thimble-menu-content">
+
+           <div id="publication-confirmation">
+             <!-- CONFIRM PUBLICATION -->
+             <div class="thimble-title">Are you sure you want to publish your page?</div>
+             <div class="thimble-additionals">
+               <div class="confirmation-buttons">
+                 <span id="confirm-publication" class="confirmation-button yes-button">Yes</span>
+                 <span id="cancel-publication" class="confirmation-button no-button">No</span>
+               </div>
+               <br>
+               <div class="public-warning">
+               A published page is visible to everyone on the Web.
+               </div>
+               <div class="error-warning">
+                 <strong>Warning:</strong> Your code appears to contain
+                 errors, and the published page may not appear as you intend.
+               </div>
+               <div class="development-note">
+                 <strong>Note:</strong> You are using experimental
+                 software and your published page could disappear at
+                 any time.
+               </div>
+             </div>
+             <!-- CONFIRM PUBLICATION -->
+
+           </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="publish-dialog" class="modal-overlay" style="display: none;">
+      <div class="thimble-modal-menu thimble-grey-bar">
+        <div class="thimble-menu-content">
+           <div id="modal-close-button">&nbsp;</div>
+
+           <!-- PUBLISH YOUR WORK -->
+           <div id="publication-result" class="accordion">
+             <div class="thimble-title" id="share-trigger">
+               <div class="thimble-branding"></div>
+               Copy and paste the url for your page
+             </div>
+             <div class="accordion-content">
+               <div class="thimble-url-box">
+                 <a href="#" class="view">[we're busy publishing your page...]</a>
+               </div>
+               <!-- TEMPORARY: Last-minute feedback text. -->
+               <p>Please <a href="http://mzl.la/thimblefeedback">take our
+                 survey</a> to help us improve.</p>
+             </div>
+           </div>
+
+           <div id="remix-it" class="accordion collapsed">
+             <div class="thimble-title">Grab the link to edit your published page</div>
+             <div class="accordion-content">
+               <div class="thimble-url-box">
+                 <a href="#" class="remix">[we're busy publishing your page...]</a>
+               </div>
+             </div>
+           </div>
+           <!-- PUBLISH YOUR WORK -->
+           
+           <!-- SHARE YOUR WORK -->
+           <div id="share-result" class="accordion collapsed">
+             <div class="thimble-title">Share this via&hellip;</div>
+             <div class="accordion-content">
+               <div class="thimble-additionals">
+                 <ul>
+                   <li data-medium="twitter">Twitter</li>
+                   <li data-medium="google">Google+</li>
+                   <li data-medium="facebook">Facebook</li>
+                 </ul>
+               </div>
+             </div>
+           </div>
+           <!-- SHARE YOUR WORK -->
+           
+        </div>
+      </div>
+    </div>
+    <!-- end of save/publish modal dialogs -->
+
+    <!-- publication error dialog -->
+    <div id="error-dialog" class="modal-overlay" style="display: none;">
+      <div class="thimble-error">
+        <div class="thimble-title thimble-grey-bar">An error occurred</div>
+        <div class="thimble-additionals">
+          <p class="error-text">error text goes here</p>
+        </div>
+      </div>
+    </div>
+    <!-- end of publication error dialog -->
+
+
+    <!-- page script section, at the end of body to prevent them holding up the page -->
+    <script>document.body.className += " html-loaded";</script>
+
+    <script>
+    if (!location.search.match(/notypekit=1/))
+      document.write('<script src="//use.typekit.com/qjh6hdg.js"></' +
+                     'script>');
+    </script>
+
+    <!-- <script src="js/require.js", data-main='js/main'></script> -->
+    <script src="js/require.js" data-main='js/main-built-debug'></script>
+
+    <!-- this COULD hold up the page, so do this absolutely last -->
+    <link rel="stylesheet" href="//www.mozilla.org/tabzilla/media/css/tabzilla.css">
+    <link rel="stylesheet" href="css/tabzilla-overrides.css">
+    <script src="//www.mozilla.org/tabzilla/media/js/tabzilla.js"></script>
+  </body>
+</html>
